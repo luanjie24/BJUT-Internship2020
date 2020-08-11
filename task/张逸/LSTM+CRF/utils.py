@@ -1,8 +1,4 @@
 # -*- coding:utf-8 -*-
-'''
-@Author: yanwii
-@Date: 2018-11-07 13:52:12
-'''
 
 def format_result(result, text, tag): 
     entities = [] 
