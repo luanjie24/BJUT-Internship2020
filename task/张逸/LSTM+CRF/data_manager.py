@@ -1,8 +1,4 @@
 # -*- coding:utf-8 -*-
-'''
-@Author: yanwii
-@Date: 2018-05-30 14:46:36
-'''
 import copy
 import pickle as cPickle
 import torch
