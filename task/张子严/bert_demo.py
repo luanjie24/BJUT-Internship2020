@@ -4,14 +4,6 @@ import pandas as pd
 import numpy as np
 from torch.utils.data import *
 
-'''
-<i> The main question here is the choice of data sets <i>
-'''
-# importing and pre-processing the data, assume the data is stored at main directory
-
-# dataFrame = pd.read_csv('train.csv', error_bad_lines=False)
-# model = BertForTokenClassification.from_pretrained('bert-base-chinese', from_tf=True)
-
 # Defining some key variables
 max_len = 150
 train_batch_size = 32
@@ -21,6 +13,10 @@ learning_rate = 2e-05
 tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
+'''
+importing and pre-processing the data (missing part)
+'''
+# dataFrame = pd.read_csv('train.csv', error_bad_lines=False)
 
 # preparing the dataSet and the dataLoader
 class CustomDataset(Dataset):
@@ -94,4 +90,6 @@ def train(epoch):
 for epoch in range(5):
     train(epoch)
 
-# Validating the model
+'''
+Validating the model thru f1 score (also a missing part)
+'''
