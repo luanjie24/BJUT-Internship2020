@@ -23,7 +23,7 @@ def main():
 
     #保存模型，供日后使用
     model.save("word2vec.model")
-    #保存特征矩阵
+    #保存特征矩阵   (.format文件和.bin文件皆可)
     model.wv.save_word2vec_format('./word2vec_200.bin', binary=False)
     ######参考其他项目代码，生成字典，读取内容后并没有明白作用。。
     index_dict, word_vectors = create_dictionaries(model)
