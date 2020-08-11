@@ -1,8 +1,4 @@
 # -*- coding:utf-8 -*-
-'''
-@Author: yanwii
-@Date: 2018-10-31 10:00:03
-'''
 import pickle
 import sys
 
