@@ -1,8 +1,4 @@
 # -*- coding:utf-8 -*-
-'''
-@Author: yanwii
-@Date: 2018-10-30 15:28:04
-'''
 import copy
 
 import numpy as np
