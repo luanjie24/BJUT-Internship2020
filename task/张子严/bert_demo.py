@@ -18,7 +18,6 @@ importing and pre-processing the data (missing part)
 '''
 # dataFrame = pd.read_csv('train.csv', error_bad_lines=False)
 
-# preparing the dataSet and the dataLoader
 class CustomDataset(Dataset):
     def __init__(self, tokenizer, sentences, labels, max_len):
         self.tokenizer = tokenizer

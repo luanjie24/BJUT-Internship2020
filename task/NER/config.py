@@ -14,11 +14,11 @@ class Config:
     model_config_path = 'project/bert_pretrain/bert_config.json'
 
     # 一些超参数
-    batch_size = 20
-    learning_rate = 0.001
+    batch_size = 32
+    learning_rate = 2e-1
     max_len = 180
 
-    epoch_num = 20
+    epoch_num = 4
     num_tag = 7
     clip_grad = 2
     
