@@ -13,18 +13,18 @@ import pickle
 import sys
 import yaml
 import torch.optim as optim
-from utils import f1_score, get_tags, format_result
+#from utils import f1_score, get_tags, format_result
+from custom_dataset import CustomData
 
-
-class ChineseNER(object):
+class Train(object):
     
     def __init__(self, entry="train"):
         self.load_config()
         self.__init_model(entry)
 
     def __init_model(self):
-        self.train_manager = DataGetter('2020-BJUT-Internship-KG-NLP/数据集/CLUEbenchmark-NER2020/train.json')
-        self.total_size = len(self.train_manager.sentence)
+        self.train_manager = DataGetter('D://nlp work//gwx//task//NER//dataset//CLUE-NER2020//train.json')
+        #self.total_size = len(self.train_manager.sentence)
         data = {
             "batch_size": 20,
             #"input_size": self.train_manager.input_size,
@@ -32,13 +32,13 @@ class ChineseNER(object):
             "tag_map": self.train_manager.get_tag2idx,
         }
         self.save_params(data)
-        dev_manager = DataGetter('2020-BJUT-Internship-KG-NLP/数据集/CLUEbenchmark-NER2020/train.json')
+        dev_manager = DataGetter('D://nlp work//gwx//task//NER//dataset//CLUE-NER2020//train.json')
         #self.dev_batch = dev_manager.iteration()
 
         self.model = BiLSTMCRF(
             tag_map=self.train_manager.tag_map,
             batch_size=self.batch_size,
-            vocab_size=len(self.train_manager.sentence),
+            vocab_size=Config.max_len,
             dropout=self.dropout,
             embedding_dim=self.embedding_size,
             hidden_dim=self.hidden_size,
@@ -53,7 +53,7 @@ class ChineseNER(object):
             print("Load config failed, using default config {}".format(error))
             fopen = open("config.py", "w", encoding='UTF-8')
             config = {
-                "embedding_size": 100,
+                "embedding_size": 3,
                 "hidden_size": 128,
                 "batch_size": 20,
                 "dropout":0.5,
@@ -92,7 +92,7 @@ class ChineseNER(object):
                 self.model.zero_grad()
                 
                 train_labels, train_sentences = train_manager.bio_converter()
-                
+                input_tensor=CustomData.__getitem__(index)
 
                 sentences_tensor = torch.tensor(train_sentences, dtype=torch.long)#转换为张量
                 tags_tensor = torch.tensor(train_labels, dtype=torch.long)
@@ -104,16 +104,16 @@ class ChineseNER(object):
                         epoch, progress, index, self.total_size, loss.cpu().tolist()[0]
                     )
                 )
-                self.evaluate()
+                self.evaluate(input_tensor)
                 print("-"*50)
                 loss.backward()
                 optimizer.step()
                 torch.save(self.model.state_dict(), self.model_path+'params.pkl')
 
-    def evaluate(self):
+    def evaluate(self,input_tensor):
         train_labels, train_sentences = train_manager.bio_converter()
-        length=len(self.train_manager.sentence
-        _, paths = self.model(input_tensor, attention_mask=None,train_sentences)
+        length=len(self.train_manager.sentence)
+        _, paths = self.model(input_tensor, train_sentences)
         print("\teval")
         for label in self.labels:
             f1_score(labels, paths, label, self.model.tag_map)
@@ -122,5 +122,5 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("\ttrain\n")
         exit()  
-    cn = ChineseNER("train")
+    cn = Train("train")
     cn.train()

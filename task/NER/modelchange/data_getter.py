@@ -75,6 +75,8 @@ class DataGetter:
                 tag_values.append(labels)
         tag_values = list(set(tag_values))
         self.tag2idx = {t: i for i, t in enumerate(tag_values)}
+        self.tag2idx['START']=21
+        self.tag2idx['STOP']=22
 
     def get_tag2idx(self):
       # 得到储存有所有tag与index的字典tag2idx
@@ -86,7 +88,7 @@ class DataGetter:
 
 
 if __name__ == "__main__":
-    train_data_loader = DataGetter('2020-BJUT-Internship-KG-NLP/数据集/CLUEbenchmark-NER2020/train.json')
+    train_data_loader = DataGetter('D://nlp work//gwx//task//NER//dataset//CLUE-NER2020//train.json')
     train_labels, train_sentences = train_data_loader.bio_converter()
     train_labels = train_data_loader.get_numeric_labels()
     # print("sentence)", train_data_loader.sentence)

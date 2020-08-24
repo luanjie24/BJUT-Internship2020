@@ -7,22 +7,22 @@ import numpy as np
 import torch
 import torch.nn as nn
 from data_getter import DataGetter
-from custom_dataset import CustomData
 from transformers import BertModel, BertConfig
 from torch.nn import CrossEntropyLoss
 import torch.nn.functional as F
+from config import Config
 
 START_TAG = "START"
 STOP_TAG = "STOP"
 
 class Model(nn.Module):
     def __init__(self,
-            tag_map=self.DataGetter.tag2idx,#使用BIOES做序列标记，此为映射
+            tag_map=DataGetter.get_tag2idx,#
             batch_size=20,#表示一次输入多少个数据，默认放在第二维度，eg：input(_,batch_size,_)
-            vocab_size=20,#词汇/////
+            vocab_size=Config.max_len,#词汇/////
             hidden_dim=128,#隐藏状态的大小; 每个LSTM单元在每个时间步产生的输出数（我理解的是lstm的神经元个数）
             dropout=0.5,#在除最后一个 RNN 层外的其他 RNN 层后面加 dropout 层，数值表示加入的概率，1.0表示100%加入
-            embedding_dim=100#embedding向量维度///
+            embedding_dim=3#embedding向量维度///
             ):
         super(Model, self).__init__()   
         # BERT层
@@ -47,8 +47,8 @@ class Model(nn.Module):
 
         #(使用bert输出的embedding，去掉下面两句的注释，做适当修改，详情参考https://blog.csdn.net/appleml/article/details/78595724?%3E)定义词向量大小，参数一为单词个数，二为单词长度
         self.word_embeddings = nn.Embedding(vocab_size, self.embedding_dim)
-        #pretrained_weight = np.array(pretrained_weight)
-        #self.word_embeddings.weight.data.copy_(torch.from_numpy(pretrained_weight))
+        embedding_output = np.array(embedding_output)
+        self.word_embeddings.weight.data.copy_(torch.from_numpy(embedding_output))
         
         #self.hidden_dim // 2隐藏层状态的维数,LSTM 堆叠的层数num_layers=1,bidirectional: 是双向 RNN,batch_first=True输入输出的第一维为 batch_size
         self.lstm = nn.LSTM(self.embedding_dim,self.hidden_dim // 2,num_layers=1, bidirectional=True, batch_first=True, dropout=self.dropout)
@@ -162,10 +162,10 @@ class Model(nn.Module):
 
 
     #lstm的前向函数，输入sentences序列经过LSTM，得到对应的发射矩阵
-    def forward(self, input_tensor, attention_mask=None, sentences,lengths=None):
+    def forward(self, input_tensor, sentences):
         #attention_mask用于微调BERT，是对padding部分进行mask
         embedding_output, _ = self.bert(input_ids, attention_mask=attention_mask)  #shape:(batch_size, sequence_length, 768)、
-        print("embedding_output.shape:"embedding_output.shape)
+        print("embedding_output.shape:",embedding_output.shape)
 
         #------------------------------------------------------------------
         sentences = torch.tensor(sentences, dtype=torch.long)
